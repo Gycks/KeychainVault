@@ -18,17 +18,21 @@ namespace KeychainVault
             }
         }
         
-        public void AddGenericPasswordItem(string service, string account, byte[] secret, GenericPasswordOption? option=null)
+        public void AddGenericPasswordItem(string service, string account, byte[] secret, 
+            bool updateIfExists=true, GenericPasswordOption? option=null)
         {
             AssertPlatformValid();
-            SaveOperation.SaveGenericPassword(service, account, secret, useDataProtectionKeychain: true, option);
+            SaveOperation.SaveGenericPassword(service, account, secret, updateIfExists, 
+                useDataProtectionKeychain: true, option: option);
         }
 
 
-        public void AddInternetPasswordItem(string server, string account, byte[] secret, InternetPasswordOption? option=null)
+        public void AddInternetPasswordItem(string server, string account, byte[] secret, 
+            bool updateIfExists=true, InternetPasswordOption? option=null)
         {
             AssertPlatformValid();
-            SaveOperation.SaveInternetPassword(server, account, secret, useDataProtectionKeychain: true, option);
+            SaveOperation.SaveInternetPassword(server, account, secret, updateIfExists, 
+                useDataProtectionKeychain: true, option: option);
         }
         
         public byte[]? LoadGenericPasswordItem(string service, string account, GenericPasswordOption? option = null)
