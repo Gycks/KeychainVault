@@ -5,13 +5,6 @@ namespace KeychainVault.Validation;
 
 internal class Validator
 {
-    internal static void IsPlatformSupported()
-    {
-        if (!OperatingSystem.IsMacOS())
-        {
-            throw new PlatformNotSupportedException("Only Mac OS X platforms are supported.");
-        }
-    }
 
     internal static void IsStringValid(string value, string paramName)
     {

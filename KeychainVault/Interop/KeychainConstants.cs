@@ -140,5 +140,17 @@ namespace KeychainVault.Interop
         internal static IntPtr KSecAttrAuthenticationTypeHTTPDigest =>
             ReadCFObjectConstant(SecurityHandle, "kSecAttrAuthenticationTypeHTTPDigest");
         
+        internal static IntPtr KSecUseDataProtectionKeychain =>
+            ReadCFObjectConstant(SecurityHandle, "kSecUseDataProtectionKeychain");
+        
+        internal static IntPtr KSecReturnData =>
+            ReadCFObjectConstant(SecurityHandle, "kSecReturnData");
+
+        internal static IntPtr KSecMatchLimit =>
+            ReadCFObjectConstant(SecurityHandle, "kSecMatchLimit");
+
+        internal static IntPtr KSecMatchLimitOne =>
+            ReadCFObjectConstant(SecurityHandle, "kSecMatchLimitOne");
+        
     }
 }

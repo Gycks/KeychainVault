@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace KeychainVault.Interop;
@@ -80,12 +81,16 @@ internal static class KeychainHelpers
         return result;
     }
     
-    internal static void SafeRelease(ref IntPtr handle)
+    internal static void SafeRelease(List<IntPtr> toRelease)
     {
-        if (handle != IntPtr.Zero)
+        for (var i = toRelease.Count - 1; i >= 0; i--)
         {
-            KeychainServices.CFRelease(handle);
-            handle = IntPtr.Zero;
+            if (toRelease[i] != IntPtr.Zero)
+            {
+                KeychainServices.CFRelease(toRelease[i]);
+            }
         }
+
+        toRelease.Clear();
     }
 }
