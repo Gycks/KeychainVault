@@ -42,6 +42,17 @@ namespace KeychainVault
             AssertPlatformValid();
             return LoadOperation.LoadInternetPassword(server, account, useDataProtectionKeychain: true, option);
         }
-            
+
+        public bool DeleteGenericPasswordItem(string service, string account, GenericPasswordOption? option = null)
+        {
+            AssertPlatformValid();
+            return DeleteOperation.DeleteGenericPassword(service, account, useDataProtectionKeychain: true, option);
+        }
+
+        public bool DeleteInternetPasswordItem(string server, string account, InternetPasswordOption? option = null)
+        {
+            AssertPlatformValid();
+            return DeleteOperation.DeleteInternetPassword(server, account, useDataProtectionKeychain: true, option);
+        }
     }
 }

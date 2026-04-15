@@ -22,7 +22,7 @@ public class GenericPasswordOption : IPasswordOption
     public int? Type { get; init; }
     
     
-    public (List<IntPtr> keys, List<IntPtr> values) BuildForInsertion(List<IntPtr> toRelease)
+    public virtual (List<IntPtr> keys, List<IntPtr> values) BuildForInsertion(List<IntPtr> toRelease)
     {
         List<IntPtr> keys = new();
         List<IntPtr> values = new();
@@ -137,7 +137,7 @@ public class GenericPasswordOption : IPasswordOption
         return (keys, values);
     }
 
-    public (List<IntPtr> keys, List<IntPtr> values) BuildForQuery(List<IntPtr> toRelease)
+    public virtual (List<IntPtr> keys, List<IntPtr> values) BuildForQuery(List<IntPtr> toRelease)
     {
         List<IntPtr> keys = new();
         List<IntPtr> values = new();

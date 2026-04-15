@@ -1,13 +1,12 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using KeychainVault.Contracts;
 using KeychainVault.Interop;
 using KeychainVault.Validation;
 
 namespace KeychainVault.Operations.Options;
 
-public class InternetPasswordOption : GenericPasswordOption, IPasswordOption
+public class InternetPasswordOption : GenericPasswordOption
 {
     public string? SecurityDomain { get; init; }
     public InternetProtocolOption? Protocol { get; init; }
@@ -89,7 +88,7 @@ public class InternetPasswordOption : GenericPasswordOption, IPasswordOption
         
     }
 
-    public new (List<IntPtr> keys, List<IntPtr> values) BuildForInsertion(List<IntPtr> toRelease)
+    public override (List<IntPtr> keys, List<IntPtr> values) BuildForInsertion(List<IntPtr> toRelease)
     {
         var (keys, values) = Build(toRelease);
         var (genericsKeys, genericsValues) = base.BuildForInsertion(toRelease);
@@ -115,7 +114,7 @@ public class InternetPasswordOption : GenericPasswordOption, IPasswordOption
         return (keys, values);
     }
     
-    public new (List<IntPtr> keys, List<IntPtr> values) BuildForQuery(List<IntPtr> toRelease)
+    public override (List<IntPtr> keys, List<IntPtr> values) BuildForQuery(List<IntPtr> toRelease)
     {
         var (keys, values) = Build(toRelease);
         var (genericsKeys, genericsValues) = base.BuildForQuery(toRelease);

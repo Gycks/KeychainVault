@@ -1,22 +1,21 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using KeychainVault.Errors;
 using KeychainVault.Interop;
 using KeychainVault.Operations.Options;
 using KeychainVault.Validation;
 
 namespace KeychainVault.Operations;
 
-internal static class SaveOperation
+public class DeleteOperation
 {
-
-    private static int SaveItem(IntPtr secClass, IntPtr primaryKey, string primaryValue, string primaryValueName,
-        string account, byte[] secret, List<IntPtr> toRelease, bool useDataProtectionKeychain,
+    private static int DeleteItem(IntPtr secClass, IntPtr primaryKey, string primaryValue, string primaryValueName,
+        string account, List<IntPtr> toRelease, bool useDataProtectionKeychain,
         List<IntPtr>? optionKeys=null, List<IntPtr>? optionValues=null)
     {
         Validator.IsStringValid(primaryValue, primaryValueName);
         Validator.IsStringValid(account, nameof(account));
-        Validator.IsSecretValid(secret, nameof(secret));
         
         var cfPrimaryValue = KeychainHelpers.CreateCFString(primaryValue);
         toRelease.Add(cfPrimaryValue);
@@ -24,15 +23,11 @@ internal static class SaveOperation
         var cfAccount = KeychainHelpers.CreateCFString(account);
         toRelease.Add(cfAccount);
         
-        var cfSecretData = KeychainHelpers.CreateCFData(secret);
-        toRelease.Add(cfSecretData);
-        
         List<IntPtr> keys =
         [
             KeychainConstants.KSecClass,
             primaryKey,
             KeychainConstants.KSecAttrAccount,
-            KeychainConstants.KSecValueData
         ];
 
         List<IntPtr> values =
@@ -40,7 +35,6 @@ internal static class SaveOperation
             secClass,
             cfPrimaryValue,
             cfAccount,
-            cfSecretData
         ];
         
         if (useDataProtectionKeychain)
@@ -71,10 +65,10 @@ internal static class SaveOperation
         var query = KeychainHelpers.CreateCFDictionary(keys.ToArray(), values.ToArray());
         toRelease.Add(query);
             
-        return KeychainServices.SecItemAdd(query, IntPtr.Zero);
+        return KeychainServices.SecItemDelete(query);
     }
     
-    internal static void SaveGenericPassword(string service, string account, byte[] secret, bool useDataProtectionKeychain=false, GenericPasswordOption? option=null)
+    internal static bool DeleteGenericPassword(string service, string account, bool useDataProtectionKeychain=false, GenericPasswordOption? option=null)
     {
         var toRelease = new List<IntPtr>();
         
@@ -83,25 +77,31 @@ internal static class SaveOperation
             int status;
             if (option != null)
             {
-                var (oKeys, oValues) = option.BuildForInsertion(toRelease);
-                status = SaveItem(KeychainConstants.KSecClassGenericPassword, KeychainConstants.KSecAttrService,
-                    service, nameof(service), account, secret, toRelease, useDataProtectionKeychain, oKeys, oValues);
+                var (oKeys, oValues) = option.BuildForQuery(toRelease);
+                status = DeleteItem(KeychainConstants.KSecClassGenericPassword, KeychainConstants.KSecAttrService,
+                    service, nameof(service), account, toRelease, useDataProtectionKeychain, oKeys, oValues);
             }
             else
             {
-                status = SaveItem(KeychainConstants.KSecClassGenericPassword, KeychainConstants.KSecAttrService,
-                    service, nameof(service), account, secret, toRelease, useDataProtectionKeychain);
+                status = DeleteItem(KeychainConstants.KSecClassGenericPassword, KeychainConstants.KSecAttrService,
+                    service, nameof(service), account, toRelease, useDataProtectionKeychain);
             }
-            Validator.IsResponseCodeSuccess(status, nameof(SaveGenericPassword));
+
+            if (status == Error.ErrSecItemNotFound)
+            {
+                return false;
+            }
+
+            Validator.IsResponseCodeSuccess(status, nameof(DeleteGenericPassword));
+            return true;
         }
         finally
         {
-            Array.Clear(secret, 0, secret.Length);
             KeychainHelpers.SafeRelease(toRelease);
         }
     }
 
-    internal static void SaveInternetPassword(string server, string account, byte[] secret, bool useDataProtectionKeychain=false, InternetPasswordOption? option=null)
+    internal static bool DeleteInternetPassword(string server, string account, bool useDataProtectionKeychain=false, InternetPasswordOption? option=null)
     {
         var toRelease = new List<IntPtr>();
 
@@ -110,23 +110,27 @@ internal static class SaveOperation
             int status;
             if (option != null)
             {
-                var (oKeys, oValues) = option.BuildForInsertion(toRelease);
-                status = SaveItem(KeychainConstants.KSecClassInternetPassword, KeychainConstants.KSecAttrServer,
-                    server, nameof(server), account, secret, toRelease, useDataProtectionKeychain, oKeys, oValues);
+                var (oKeys, oValues) = option.BuildForQuery(toRelease);
+                status = DeleteItem(KeychainConstants.KSecClassInternetPassword, KeychainConstants.KSecAttrServer,
+                    server, nameof(server), account, toRelease, useDataProtectionKeychain, oKeys, oValues);
             }
             else
             {
-                status = SaveItem(KeychainConstants.KSecClassInternetPassword, KeychainConstants.KSecAttrServer,
-                    server, nameof(server), account, secret, toRelease, useDataProtectionKeychain);
+                status = DeleteItem(KeychainConstants.KSecClassInternetPassword, KeychainConstants.KSecAttrServer,
+                    server, nameof(server), account, toRelease, useDataProtectionKeychain);
             }
             
-            Validator.IsResponseCodeSuccess(status, nameof(SaveInternetPassword));
+            if (status == Error.ErrSecItemNotFound)
+            {
+                return false;
+            }
+
+            Validator.IsResponseCodeSuccess(status, nameof(DeleteGenericPassword));
+            return true;
         }
         finally
         {
-            Array.Clear(secret, 0, secret.Length);
             KeychainHelpers.SafeRelease(toRelease);
         }
     }
-
 }
