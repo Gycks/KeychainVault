@@ -50,7 +50,7 @@ jobs:
           fi
 
   testing:
-    needs: tag-check
+    needs: run-check
     if: ${{ needs.run-check.outputs.run_pipeline == 'true' }}
     runs-on: macos-latest
     environment: release
