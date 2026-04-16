@@ -12,7 +12,7 @@ internal static class SaveOperation
 {
 
     private static int SaveItem(IntPtr secClass, IntPtr primaryKey, string primaryValue, string primaryValueName,
-        string account, byte[] secret, List<IntPtr> toRelease, bool useDataProtectionKeychain,
+        string account, byte[]? secret, List<IntPtr> toRelease, bool useDataProtectionKeychain,
         List<IntPtr>? optionKeys=null, List<IntPtr>? optionValues=null)
     {
         Validator.IsStringValid(primaryValue, primaryValueName);

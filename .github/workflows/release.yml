@@ -1,0 +1,79 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '*.*'
+      - '*.*.*'
+
+env:
+  MAIN_PROJECT: KeychainVault/KeychainVault.csproj
+  ARTIFACT_DIR: ./artifacts
+  DOTNET_VERSION: ${{ vars.DOTNET_VERSION }}
+  CONFIGURATION: ${{ vars.CONFIGURATION }}
+
+jobs:
+  tag-check:
+    runs-on: ubuntu-latest
+    outputs:
+      valid: ${{ steps.check.outputs.valid }}
+    steps:
+      - id: check
+        shell: bash
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          if [[ "$TAG" =~ ^[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]; then
+            echo "valid=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "valid=false" >> "$GITHUB_OUTPUT"
+            echo "Tag '$TAG' does not match d.d or d.d.d. Skipping."
+          fi
+
+  testing:
+    needs: tag-check
+    if: ${{ needs.tag-check.outputs.valid == 'true' }}
+    runs-on: macos-latest
+    environment: release
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build -c "$CONFIGURATION" --no-restore
+
+      - name: Test
+        run: dotnet test -c "$CONFIGURATION" --no-build
+
+  publish-nuget:
+    needs: [tag-check, testing]
+    if: ${{ needs.tag-check.outputs.valid == 'true' }}
+    runs-on: ubuntu-latest
+    environment: release
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build main project
+        run: dotnet build "$MAIN_PROJECT" -c "$CONFIGURATION" --no-restore
+
+      - name: Pack as NuGet
+        run: dotnet pack "$MAIN_PROJECT" -c "$CONFIGURATION" --no-build -p:PackageVersion="${GITHUB_REF_NAME}" --output "$ARTIFACT_DIR"
+
+      - name: Push package to NuGet.org
+        run: dotnet nuget push "$ARTIFACT_DIR"/*.nupkg --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
