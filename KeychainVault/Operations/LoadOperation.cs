@@ -81,13 +81,6 @@ internal static class LoadOperation
             {
                 throw new InvalidOperationException("Keychain returned success but no result data.");
             }
-            
-            var dataPtr = KeychainServices.CFDataGetBytePtr(result);
-
-            if (dataPtr == IntPtr.Zero)
-            {
-                return null;
-            }
 
             var secretPtr = KeychainServices.CFDictionaryGetValue(result, KeychainConstants.KSecValueData);
             var accountPtr = KeychainServices.CFDictionaryGetValue(result, KeychainConstants.KSecAttrAccount);

@@ -25,7 +25,7 @@ internal static class SaveOperation
         var cfAccount = KeychainHelpers.CreateCFString(account);
         toRelease.Add(cfAccount);
         
-        var cfSecretData = KeychainHelpers.CreateCFData(secret);
+        var cfSecretData = KeychainHelpers.CreateCFData(secret!);
         toRelease.Add(cfSecretData);
         
         List<IntPtr> keys =
@@ -90,7 +90,7 @@ internal static class SaveOperation
         var cfAccount = KeychainHelpers.CreateCFString(account);
         toRelease.Add(cfAccount);
 
-        var cfSecretData = KeychainHelpers.CreateCFData(secret);
+        var cfSecretData = KeychainHelpers.CreateCFData(secret!);
         toRelease.Add(cfSecretData);
 
         List<IntPtr> queryKeys =
