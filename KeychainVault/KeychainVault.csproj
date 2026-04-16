@@ -3,6 +3,13 @@
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <RootNamespace>KeychainVault</RootNamespace>
+        <Description>
+            C# wrapper around SecItemAdd, SecItemCopyMatching, SecItemUpdate, 
+            and SecItemDelete to store, retrieve and delete items from Apple Keychain access
+        </Description>
+        <RepositoryUrl>https://github.com/Gycks/KeychainVault</RepositoryUrl>
+        <PackageId>GycksLab.KeychainVault</PackageId>
+        <PackageProjectUrl>https://github.com/Gycks/KeychainVault</PackageProjectUrl>
     </PropertyGroup>
 
 </Project>

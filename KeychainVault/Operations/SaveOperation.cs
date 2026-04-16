@@ -77,8 +77,8 @@ internal static class SaveOperation
 
     private static int UpdateItem(IntPtr secClass, IntPtr primaryKey, string primaryValue, string primaryValueName,
         string account, byte[] secret, List<IntPtr> toRelease, bool useDataProtectionKeychain,
-        List<IntPtr>? queryOptionKeys = null,
-        List<IntPtr>? queryOptionValues = null, List<IntPtr>? updateKeys = null, List<IntPtr>? updateValues = null)
+        List<IntPtr>? queryOptionKeys = null, List<IntPtr>? queryOptionValues = null, 
+        List<IntPtr>? updateKeys = null, List<IntPtr>? updateValues = null)
     {
         Validator.IsStringValid(primaryValue, primaryValueName);
         Validator.IsStringValid(account, nameof(account));
@@ -191,9 +191,11 @@ internal static class SaveOperation
             {
                 if (option is not null)
                 {
-                    var (oKeys, oValues) = option.BuildForQuery(toRelease);
+                    var (queryKeys, queryValues) = option.BuildForQuery(toRelease);
+                    var (updateKeys, updateValues) = option.BuildForUpdate(toRelease);
                     status = UpdateItem(KeychainConstants.KSecClassGenericPassword, KeychainConstants.KSecAttrService,
-                        service, nameof(service), account, secret, toRelease, useDataProtectionKeychain, oKeys, oValues);
+                        service, nameof(service), account, secret, toRelease, useDataProtectionKeychain, 
+                        queryOptionKeys: queryKeys, queryOptionValues: queryValues, updateKeys: updateKeys, updateValues: updateValues);
                 }
                 else
                 {
@@ -235,9 +237,11 @@ internal static class SaveOperation
             {
                 if (option is not null)
                 {
-                    var (oKeys, oValues) = option.BuildForQuery(toRelease);
+                    var (queryKeys, queryValues) = option.BuildForQuery(toRelease);
+                    var (updateKeys, updateValues) = option.BuildForUpdate(toRelease);
                     status = UpdateItem(KeychainConstants.KSecClassInternetPassword, KeychainConstants.KSecAttrServer,
-                        server, nameof(server), account, secret, toRelease, useDataProtectionKeychain, oKeys, oValues);
+                        server, nameof(server), account, secret, toRelease, useDataProtectionKeychain, 
+                        queryOptionKeys: queryKeys, queryOptionValues: queryValues, updateKeys: updateKeys, updateValues: updateValues);
                 }
                 else
                 {
