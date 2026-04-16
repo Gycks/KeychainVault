@@ -46,7 +46,7 @@ public class MacOSKeychainTests : IDisposable
         var expected = secret.ToArray(); 
         
         _keychain.AddGenericPasswordItem(_testService, _testAccount, secret);
-        var retrieved = _keychain.LoadGenericPasswordItem(_testService, _testAccount);
+        var retrieved = _keychain.LoadGenericPasswordItem(_testService);
         
         Assert.NotNull(retrieved);
         Assert.Equal(expected, retrieved);
@@ -64,7 +64,7 @@ public class MacOSKeychainTests : IDisposable
         };
         
         _keychain.AddGenericPasswordItem(_testService, _testAccount, secret, option: option);
-        var retrieved = _keychain.LoadGenericPasswordItem(_testService, _testAccount, option);
+        var retrieved = _keychain.LoadGenericPasswordItem(_testService, option);
         
         Assert.NotNull(retrieved);
         Assert.Equal(expected, retrieved);
@@ -92,7 +92,7 @@ public class MacOSKeychainTests : IDisposable
         
         _keychain.AddGenericPasswordItem(_testService, _testAccount, secret1, updateIfExists: true);
         _keychain.AddGenericPasswordItem(_testService, _testAccount, secret2, updateIfExists: true);
-        var retrieved = _keychain.LoadGenericPasswordItem(_testService, _testAccount);
+        var retrieved = _keychain.LoadGenericPasswordItem(_testService);
         
         Assert.NotNull(retrieved);
         Assert.NotEqual(expected1, retrieved);
@@ -102,7 +102,7 @@ public class MacOSKeychainTests : IDisposable
     [Fact]
     public void LoadGenericPasswordItem_NonExistent_ShouldReturnNull()
     {
-        var retrieved = _keychain.LoadGenericPasswordItem("NonExistentService", "NonExistentAccount");
+        var retrieved = _keychain.LoadGenericPasswordItem("NonExistentService");
         
         Assert.Null(retrieved);
     }
@@ -121,7 +121,7 @@ public class MacOSKeychainTests : IDisposable
     [Fact]
     public void DeleteGenericPasswordItem_NonExistent_ShouldReturnFalse()
     {
-        var result = _keychain.DeleteGenericPasswordItem("NonExistentService", "NonExistentAccount");
+        var result = _keychain.DeleteGenericPasswordItem("NonExistentService");
         
         Assert.False(result);
     }
@@ -133,7 +133,7 @@ public class MacOSKeychainTests : IDisposable
         var expected = secret.ToArray();
         
         _keychain.AddInternetPasswordItem(_testServer, _testAccount, secret);
-        var retrieved = _keychain.LoadInternetPasswordItem(_testServer, _testAccount);
+        var retrieved = _keychain.LoadInternetPasswordItem(_testServer);
         
         Assert.NotNull(retrieved);
         Assert.Equal(expected, retrieved);
@@ -151,7 +151,7 @@ public class MacOSKeychainTests : IDisposable
         };
         
         _keychain.AddInternetPasswordItem(_testServer, _testAccount, secret, option: option);
-        var retrieved = _keychain.LoadInternetPasswordItem(_testServer, _testAccount, option);
+        var retrieved = _keychain.LoadInternetPasswordItem(_testServer, option);
         
         Assert.NotNull(retrieved);
         Assert.Equal(expected, retrieved);
@@ -160,7 +160,7 @@ public class MacOSKeychainTests : IDisposable
     [Fact]
     public void LoadInternetPasswordItem_NonExistent_ShouldReturnNull()
     {
-        var retrieved = _keychain.LoadInternetPasswordItem("NonExistentServer", "NonExistentAccount");
+        var retrieved = _keychain.LoadInternetPasswordItem("NonExistentServer");
         
         Assert.Null(retrieved);
     }
@@ -171,7 +171,7 @@ public class MacOSKeychainTests : IDisposable
         var secret = Encoding.UTF8.GetBytes("testpassword");
         _keychain.AddInternetPasswordItem(_testServer, _testAccount, secret);
         
-        var result = _keychain.DeleteInternetPasswordItem(_testServer, _testAccount);
+        var result = _keychain.DeleteInternetPasswordItem(_testServer);
         
         Assert.True(result);
     }
