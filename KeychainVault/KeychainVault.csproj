@@ -7,9 +7,13 @@
             C# wrapper around SecItemAdd, SecItemCopyMatching, SecItemUpdate, 
             and SecItemDelete to store, retrieve and delete items from Apple Keychain access
         </Description>
+        <Authors>Gycks</Authors>
         <RepositoryUrl>https://github.com/Gycks/KeychainVault</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
         <PackageId>GycksLab.KeychainVault</PackageId>
         <PackageProjectUrl>https://github.com/Gycks/KeychainVault</PackageProjectUrl>
+        <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+        
     </PropertyGroup>
 
     <ItemGroup>
