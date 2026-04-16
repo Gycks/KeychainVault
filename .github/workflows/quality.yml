@@ -1,0 +1,73 @@
+name: Quality
+
+on:
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+    branches: [ main ]
+
+env:
+  DOTNET_VERSION: ${{ vars.DOTNET_VERSION }}
+  CONFIGURATION: ${{ vars.CONFIGURATION }}
+
+jobs:
+  run-check:
+    runs-on: ubuntu-latest
+    outputs:
+      run_pipeline: ${{ steps.check.outputs.run_pipeline }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: check
+        shell: bash
+        run: |
+          echo "Checking changed files..."
+          
+          # Get changed files in PR
+          git fetch origin ${{ github.base_ref }}
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }})
+          
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+          
+          DOC_REGEX="^docs/|\.md$|\.txt$"
+          
+          NON_DOC_CHANGED=false
+          
+          for file in $CHANGED_FILES; do
+            if [[ ! "$file" =~ $DOC_REGEX ]]; then
+              NON_DOC_CHANGED=true
+              break
+            fi
+          done
+          
+          if [ "$NON_DOC_CHANGED" = true ]; then
+            echo "run_pipeline=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Only documentation changes detected. Skipping pipeline."
+            echo "run_pipeline=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  testing:
+    needs: tag-check
+    if: ${{ needs.run-check.outputs.run_pipeline == 'true' }}
+    runs-on: macos-latest
+    environment: release
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build -c "$CONFIGURATION" --no-restore
+
+      - name: Test
+        run: dotnet test -c "$CONFIGURATION" --no-build
