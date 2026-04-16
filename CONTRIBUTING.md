@@ -8,9 +8,9 @@ This project adheres to the [Contributor Covenant Code of Conduct](CODE_OF_CONDU
 
 ## How Can I Contribute?
 
-- Create a new branch from main
+- Fork this repo
 - Work on your branch
-- Create a pull request to main [See Pull Requests](#Pull Requests)
+- Create a pull request to this repo main branch [See Pull Requests](#Pull Requests)
 
 ### Reporting Bugs
 
