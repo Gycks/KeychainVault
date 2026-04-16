@@ -161,4 +161,79 @@ public class GenericPasswordOption : IPasswordOption
         
         return  (keys, values);
     }
+    
+    public (List<IntPtr> keys, List<IntPtr> values) BuildForUpdate(List<IntPtr> toRelease)
+    {
+        List<IntPtr> keys = new();
+        List<IntPtr> values = new();
+
+        if (Label is not null)
+        {
+            Validator.IsStringValid(Label, $"{nameof(GenericPasswordOption)}.{nameof(Label)}");
+
+            var cfLabel = KeychainHelpers.CreateCFString(Label);
+            toRelease.Add(cfLabel);
+
+            keys.Add(KeychainConstants.KSecAttrLabel);
+            values.Add(cfLabel);
+        }
+
+        if (Description is not null)
+        {
+            Validator.IsStringValid(Description, $"{nameof(GenericPasswordOption)}.{nameof(Description)}");
+
+            var cfDescription = KeychainHelpers.CreateCFString(Description);
+            toRelease.Add(cfDescription);
+
+            keys.Add(KeychainConstants.KSecAttrDescription);
+            values.Add(cfDescription);
+        }
+
+        if (Comment is not null)
+        {
+            Validator.IsStringValid(Comment, $"{nameof(GenericPasswordOption)}.{nameof(Comment)}");
+
+            var cfComment = KeychainHelpers.CreateCFString(Comment);
+            toRelease.Add(cfComment);
+
+            keys.Add(KeychainConstants.KSecAttrComment);
+            values.Add(cfComment);
+        }
+
+        if (IsInvisible is not null)
+        {
+            keys.Add(KeychainConstants.KSecAttrIsInvisible);
+            values.Add(IsInvisible.Value
+                ? KeychainConstants.KCFBooleanTrue
+                : KeychainConstants.KCFBooleanFalse);
+        }
+
+        if (IsNegative is not null)
+        {
+            keys.Add(KeychainConstants.KSecAttrIsNegative);
+            values.Add(IsNegative.Value
+                ? KeychainConstants.KCFBooleanTrue
+                : KeychainConstants.KCFBooleanFalse);
+        }
+
+        if (Creator is not null)
+        {
+            var cfCreator = KeychainHelpers.CreateCFNumber(Creator.Value);
+            toRelease.Add(cfCreator);
+
+            keys.Add(KeychainConstants.KSecAttrCreator);
+            values.Add(cfCreator);
+        }
+
+        if (Type is not null)
+        {
+            var cfType = KeychainHelpers.CreateCFNumber(Type.Value);
+            toRelease.Add(cfType);
+
+            keys.Add(KeychainConstants.KSecAttrType);
+            values.Add(cfType);
+        }
+
+        return (keys, values);
+    }
 }
