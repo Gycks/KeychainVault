@@ -5,20 +5,6 @@
 A lightweight .NET library for securely storing, retrieving, updating, and deleting secrets using the native Apple Keychain APIs. 
 It wraps the native `SecItemAdd`, `SecItemCopyMatching`, `SecItemUpdate`, and `SecItemDelete` functions via P/Invoke, providing a safe and easy-to-use interface for secret management on macOS.
 
-## Table of Contents
-
-- [Features](#features)
-- [Supported Platforms](#supported-platforms)
-- [Installation](#installation)
-- [Quick Start](#quick-start)
-- [Usage](#usage)
-  - [Adding Passwords](#adding-passwords)
-  - [Retrieving Passwords](#retrieving-passwords)
-  - [Deleting Passwords](#deleting-passwords)
-- [API Reference](#api-reference)
-- [Security Considerations](#security-considerations)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Features
 

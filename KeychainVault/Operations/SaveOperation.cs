@@ -76,7 +76,7 @@ internal static class SaveOperation
     }
 
     private static int UpdateItem(IntPtr secClass, IntPtr primaryKey, string primaryValue, string primaryValueName,
-        string account, byte[] secret, List<IntPtr> toRelease, bool useDataProtectionKeychain,
+        string account, byte[]? secret, List<IntPtr> toRelease, bool useDataProtectionKeychain,
         List<IntPtr>? queryOptionKeys = null, List<IntPtr>? queryOptionValues = null, 
         List<IntPtr>? updateKeys = null, List<IntPtr>? updateValues = null)
     {
@@ -167,7 +167,7 @@ internal static class SaveOperation
         return KeychainServices.SecItemUpdate(queryDict, updateDict);
     }
     
-    internal static void SaveGenericPassword(string service, string account, byte[] secret, bool updateIfExists, 
+    internal static void SaveGenericPassword(string service, string account, byte[]? secret, bool updateIfExists, 
         bool useDataProtectionKeychain=false, GenericPasswordOption? option=null)
     {
         var toRelease = new List<IntPtr>();
@@ -208,12 +208,15 @@ internal static class SaveOperation
         }
         finally
         {
-            Array.Clear(secret, 0, secret.Length);
+            if (secret != null)
+            {
+                Array.Clear(secret, 0, secret.Length);
+            }
             KeychainHelpers.SafeRelease(toRelease);
         }
     }
 
-    internal static void SaveInternetPassword(string server, string account, byte[] secret, bool updateIfExists=true,
+    internal static void SaveInternetPassword(string server, string account, byte[]? secret, bool updateIfExists=true,
         bool useDataProtectionKeychain=false, InternetPasswordOption? option=null)
     {
         var toRelease = new List<IntPtr>();
@@ -254,7 +257,10 @@ internal static class SaveOperation
         }
         finally
         {
-            Array.Clear(secret, 0, secret.Length);
+            if (secret != null)
+            {
+                Array.Clear(secret, 0, secret.Length);
+            }
             KeychainHelpers.SafeRelease(toRelease);
         }
     }

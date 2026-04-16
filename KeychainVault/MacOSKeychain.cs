@@ -10,6 +10,15 @@ namespace KeychainVault
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public sealed class MacOSKeychain : IKeychain
     {
+        private readonly bool _useDataProtectionKeychain;
+
+        public MacOSKeychain() : this(true) { }
+
+        internal MacOSKeychain(bool useDataProtectionKeychain)
+        {
+            _useDataProtectionKeychain = useDataProtectionKeychain;
+        }
+        
         private void AssertPlatformValid()
         {
             if (!OperatingSystem.IsMacOS())
@@ -23,7 +32,7 @@ namespace KeychainVault
         {
             AssertPlatformValid();
             SaveOperation.SaveGenericPassword(service, account, secret, updateIfExists, 
-                useDataProtectionKeychain: true, option: option);
+                useDataProtectionKeychain: _useDataProtectionKeychain, option: option);
         }
 
 
@@ -32,31 +41,31 @@ namespace KeychainVault
         {
             AssertPlatformValid();
             SaveOperation.SaveInternetPassword(server, account, secret, updateIfExists, 
-                useDataProtectionKeychain: true, option: option);
+                useDataProtectionKeychain: _useDataProtectionKeychain, option: option);
         }
         
         public byte[]? LoadGenericPasswordItem(string service, string account, GenericPasswordOption? option = null)
         {
             AssertPlatformValid();
-            return LoadOperation.LoadGenericPassword(service, account, useDataProtectionKeychain: true, option);
+            return LoadOperation.LoadGenericPassword(service, account, useDataProtectionKeychain: _useDataProtectionKeychain, option);
         }
 
         public byte[]? LoadInternetPasswordItem(string server, string account, InternetPasswordOption? option = null)
         {
             AssertPlatformValid();
-            return LoadOperation.LoadInternetPassword(server, account, useDataProtectionKeychain: true, option);
+            return LoadOperation.LoadInternetPassword(server, account, useDataProtectionKeychain: _useDataProtectionKeychain, option);
         }
 
         public bool DeleteGenericPasswordItem(string service, string account, GenericPasswordOption? option = null)
         {
             AssertPlatformValid();
-            return DeleteOperation.DeleteGenericPassword(service, account, useDataProtectionKeychain: true, option);
+            return DeleteOperation.DeleteGenericPassword(service, account, useDataProtectionKeychain: _useDataProtectionKeychain, option);
         }
 
         public bool DeleteInternetPasswordItem(string server, string account, InternetPasswordOption? option = null)
         {
             AssertPlatformValid();
-            return DeleteOperation.DeleteInternetPassword(server, account, useDataProtectionKeychain: true, option);
+            return DeleteOperation.DeleteInternetPassword(server, account, useDataProtectionKeychain: _useDataProtectionKeychain, option);
         }
     }
 }

@@ -31,6 +31,7 @@ internal class Validator
             Error.ErrSecDuplicateItem => "Item already exists.",
             Error.ErrSecItemNotFound => "Item does not exist or could not be found.",
             Error.ErrSecAuthFailed => "Keychain authentication failed.",
+            Error.ErrSecMissingEntitlement => "No entitlement found.",
             _ => $"Unknown error. Status: {status}"
         };
 
