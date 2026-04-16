@@ -49,15 +49,15 @@ keychain.AddGenericPasswordItem(
 );
 
 // Retrieve the password
-byte[]? retrievedSecret = keychain.LoadGenericPasswordItem(
-    service: "com.myapp.auth",
-    account: "user@example.com"
+var item = keychain.LoadGenericPasswordItem(
+    service: "com.myapp.auth"
 );
 
-if (retrievedSecret != null)
+if (item != null)
 {
-    string password = Encoding.UTF8.GetString(retrievedSecret);
+    string password = Encoding.UTF8.GetString(item.Secret);
     Console.WriteLine($"Retrieved password: {password}");
+    Console.WriteLine($"Account: {item.Account}");
 }
 ```
 
@@ -110,21 +110,21 @@ keychain.AddInternetPasswordItem(
 
 ```csharp
 // Generic password
-byte[]? genericSecret = keychain.LoadGenericPasswordItem(
-    service: "com.myapp.database",
-    account: "dbuser"
+var genericItem = keychain.LoadGenericPasswordItem(
+    service: "com.myapp.database"
 );
 
 // Internet password
-byte[]? internetSecret = keychain.LoadInternetPasswordItem(
-    server: "api.example.com",
-    account: "apiuser@example.com"
+var internetItem = keychain.LoadInternetPasswordItem(
+    server: "api.example.com"
 );
 
-if (genericSecret != null)
+if (genericItem != null)
 {
-    string password = Encoding.UTF8.GetString(genericSecret);
-    // Use the password...
+    string password = Encoding.UTF8.GetString(genericItem.Secret);
+    string account = genericItem.Account;
+    string label = genericItem.Label;
+    // Use the retrieved data...
 }
 ```
 

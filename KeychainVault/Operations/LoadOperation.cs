@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using KeychainVault.Errors;
 using KeychainVault.Interop;
+using KeychainVault.Model;
 using KeychainVault.Operations.Options;
 using KeychainVault.Validation;
 
@@ -11,7 +12,7 @@ namespace KeychainVault.Operations;
 
 internal static class LoadOperation
 {
-    private static byte[]? LoadItem(IntPtr secClass, 
+    private static KeychainItemData? LoadItem(IntPtr secClass, 
         IntPtr primaryKey, string primaryValue, string primaryValueName, List<IntPtr> toRelease, 
         bool useDataProtectionKeychain, List<IntPtr>? optionKeys=null, List<IntPtr>? optionValues=null)
     {
@@ -29,6 +30,7 @@ internal static class LoadOperation
                 KeychainConstants.KSecClass,
                 primaryKey,
                 KeychainConstants.KSecReturnData,
+                KeychainConstants.KSecReturnAttributes,
                 KeychainConstants.KSecMatchLimit
             ];
 
@@ -36,6 +38,7 @@ internal static class LoadOperation
             [
                 secClass,
                 cfPrimaryValue,
+                KeychainConstants.KCFBooleanTrue,
                 KeychainConstants.KCFBooleanTrue,
                 KeychainConstants.KSecMatchLimitOne
             ];
@@ -78,23 +81,30 @@ internal static class LoadOperation
             {
                 throw new InvalidOperationException("Keychain returned success but no result data.");
             }
-
-            var length = KeychainServices.CFDataGetLength(result);
-            if (length <= 0)
-            {
-                return Array.Empty<byte>();
-            }
-
-            var bytes = new byte[(int)length];
+            
             var dataPtr = KeychainServices.CFDataGetBytePtr(result);
 
             if (dataPtr == IntPtr.Zero)
             {
-                throw new InvalidOperationException("Failed to read keychain result bytes.");
+                return null;
             }
 
-            Marshal.Copy(dataPtr, bytes, 0, (int)length);
-            return bytes;
+            var secretPtr = KeychainServices.CFDictionaryGetValue(result, KeychainConstants.KSecValueData);
+            var accountPtr = KeychainServices.CFDictionaryGetValue(result, KeychainConstants.KSecAttrAccount);
+            var servicePtr = KeychainServices.CFDictionaryGetValue(result, KeychainConstants.KSecAttrService);
+            var labelPtr = KeychainServices.CFDictionaryGetValue(result, KeychainConstants.KSecAttrLabel);
+            var commentPtr = KeychainServices.CFDictionaryGetValue(result, KeychainConstants.KSecAttrComment);
+            var descriptionPtr = KeychainServices.CFDictionaryGetValue(result, KeychainConstants.KSecAttrDescription);
+
+            return new KeychainItemData
+            {
+                Secret = KeychainHelpers.ReadCFData(secretPtr),
+                Account = KeychainHelpers.ReadCFString(accountPtr),
+                Service = KeychainHelpers.ReadCFString(servicePtr),
+                Label = KeychainHelpers.ReadCFString(labelPtr),
+                Comment = KeychainHelpers.ReadCFString(commentPtr),
+                Description = KeychainHelpers.ReadCFString(descriptionPtr)
+            };
         }
         finally
         {
@@ -105,7 +115,7 @@ internal static class LoadOperation
         }
     }
     
-    internal static byte[]? LoadGenericPassword(string service, bool useDataProtectionKeychain, GenericPasswordOption? option=null)
+    internal static KeychainItemData? LoadGenericPassword(string service, bool useDataProtectionKeychain, GenericPasswordOption? option=null)
     {
         var toRelease = new List<IntPtr>();
 
@@ -141,7 +151,7 @@ internal static class LoadOperation
         
     }
 
-    internal static byte[]? LoadInternetPassword(string server, bool useDataProtectionKeychain, InternetPasswordOption? option=null)
+    internal static KeychainItemData? LoadInternetPassword(string server, bool useDataProtectionKeychain, InternetPasswordOption? option=null)
     {
         var toRelease = new List<IntPtr>();
 

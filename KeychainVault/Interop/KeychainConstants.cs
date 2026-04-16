@@ -145,6 +145,9 @@ namespace KeychainVault.Interop
         
         internal static IntPtr KSecReturnData =>
             ReadCFObjectConstant(SecurityHandle, "kSecReturnData");
+        
+        internal static IntPtr KSecReturnAttributes =>
+            ReadCFObjectConstant(SecurityHandle, "kSecReturnAttributes");
 
         internal static IntPtr KSecMatchLimit =>
             ReadCFObjectConstant(SecurityHandle, "kSecMatchLimit");

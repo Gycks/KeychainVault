@@ -9,3 +9,7 @@
 - `DeleteXPasswordItem`: account specification made optional. By default, it should be possible to delete
     an item with just the key (service or server). However, to be more precise, the account along side other
     search options could be passed along too. (See Apple Docs on Updating and deleting keychain items for a reference)
+
+### v1.0.1
+- Extend `LoadXPasswordItem` to return not just the secret, but a response object consisiting of the secret
+    and some data attributes.

@@ -1,4 +1,5 @@
 #nullable enable
+using KeychainVault.Model;
 using KeychainVault.Operations.Options;
 
 namespace KeychainVault.Contracts;
@@ -33,16 +34,16 @@ public interface IKeychain
     /// </summary>
     /// <param name="service">The service name associated with the password.</param>
     /// <param name="option">Optional additional options for the password item.</param>
-    /// <returns>The password data as a byte array, or null if not found.</returns>
-    byte[]? LoadGenericPasswordItem(string service, GenericPasswordOption? option = null);
+    /// <returns>The data associated to the service, or null if not found.</returns>
+    KeychainItemData?LoadGenericPasswordItem(string service, GenericPasswordOption? option = null);
 
     /// <summary>
     /// Loads an internet password item from the keychain.
     /// </summary>
     /// <param name="server">The server name associated with the password.</param>
     /// <param name="option">Optional additional options for the password item.</param>
-    /// <returns>The password data as a byte array, or null if not found.</returns>
-    byte[]? LoadInternetPasswordItem(string server, InternetPasswordOption? option = null);
+    /// <returns>The data associated to the server, or null if not found.</returns>
+    KeychainItemData? LoadInternetPasswordItem(string server, InternetPasswordOption? option = null);
 
     /// <summary>
     /// Deletes a generic password item from the keychain.

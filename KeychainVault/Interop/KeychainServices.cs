@@ -50,5 +50,15 @@ namespace KeychainVault.Interop
         [DllImport(AppleFrameworks.SecurityFramework)]
         internal static extern int SecItemDelete(IntPtr query);
         
+        [DllImport(AppleFrameworks.CoreFoundationFramework)]
+        internal static extern IntPtr CFDictionaryGetValue(IntPtr theDict, IntPtr key);
+
+        [DllImport(AppleFrameworks.CoreFoundationFramework)]
+        internal static extern bool CFStringGetCString(
+            IntPtr theString,
+            byte[] buffer,
+            nint bufferSize,
+            uint encoding);
+        
     }
 }

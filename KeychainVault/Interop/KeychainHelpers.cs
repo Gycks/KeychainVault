@@ -1,5 +1,7 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace KeychainVault.Interop;
@@ -92,5 +94,53 @@ internal static class KeychainHelpers
         }
 
         toRelease.Clear();
+    }
+    
+    internal static string? ReadCFString(IntPtr cfString)
+    {
+        if (cfString == IntPtr.Zero)
+        {
+            return null;
+        }
+
+        byte[] buffer = new byte[1024];
+        bool ok = KeychainServices.CFStringGetCString(
+            cfString,
+            buffer,
+            buffer.Length,
+            KeychainConstants.KCFStringEncodingUTF8);
+
+        if (!ok)
+        {
+            throw new InvalidOperationException("Failed to read CFString.");
+        }
+
+        int nullIndex = Array.IndexOf(buffer, (byte)0);
+        int length = nullIndex >= 0 ? nullIndex : buffer.Length;
+        return Encoding.UTF8.GetString(buffer, 0, length);
+    }
+    
+    internal static byte[] ReadCFData(IntPtr cfData)
+    {
+        if (cfData == IntPtr.Zero)
+        {
+            return Array.Empty<byte>();
+        }
+
+        var length = KeychainServices.CFDataGetLength(cfData);
+        if (length <= 0)
+        {
+            return Array.Empty<byte>();
+        }
+
+        var dataPtr = KeychainServices.CFDataGetBytePtr(cfData);
+        if (dataPtr == IntPtr.Zero)
+        {
+            throw new InvalidOperationException("Failed to read CFData bytes.");
+        }
+
+        var bytes = new byte[(int)length];
+        Marshal.Copy(dataPtr, bytes, 0, (int)length);
+        return bytes;
     }
 }

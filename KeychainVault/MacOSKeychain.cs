@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using KeychainVault.Contracts;
+using KeychainVault.Model;
 using KeychainVault.Operations;
 using KeychainVault.Operations.Options;
 
@@ -44,13 +45,13 @@ namespace KeychainVault
                 useDataProtectionKeychain: _useDataProtectionKeychain, option: option);
         }
         
-        public byte[]? LoadGenericPasswordItem(string service, GenericPasswordOption? option = null)
+        public KeychainItemData? LoadGenericPasswordItem(string service, GenericPasswordOption? option = null)
         {
             AssertPlatformValid();
             return LoadOperation.LoadGenericPassword(service, useDataProtectionKeychain: _useDataProtectionKeychain, option);
         }
 
-        public byte[]? LoadInternetPasswordItem(string server, InternetPasswordOption? option = null)
+        public KeychainItemData? LoadInternetPasswordItem(string server, InternetPasswordOption? option = null)
         {
             AssertPlatformValid();
             return LoadOperation.LoadInternetPassword(server, useDataProtectionKeychain: _useDataProtectionKeychain, option);

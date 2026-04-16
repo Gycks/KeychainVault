@@ -49,7 +49,8 @@ public class MacOSKeychainTests : IDisposable
         var retrieved = _keychain.LoadGenericPasswordItem(_testService);
         
         Assert.NotNull(retrieved);
-        Assert.Equal(expected, retrieved);
+        Assert.Equal(expected, retrieved.Secret);
+        Assert.Equal(_testAccount, retrieved.Account);
     }
 
     [Fact]
@@ -67,7 +68,8 @@ public class MacOSKeychainTests : IDisposable
         var retrieved = _keychain.LoadGenericPasswordItem(_testService, option);
         
         Assert.NotNull(retrieved);
-        Assert.Equal(expected, retrieved);
+        Assert.Equal(expected, retrieved.Secret);
+        Assert.Equal(_testAccount, retrieved.Account);
     }
 
     [Fact]
@@ -95,8 +97,9 @@ public class MacOSKeychainTests : IDisposable
         var retrieved = _keychain.LoadGenericPasswordItem(_testService);
         
         Assert.NotNull(retrieved);
-        Assert.NotEqual(expected1, retrieved);
-        Assert.Equal(expected2, retrieved);
+        Assert.NotEqual(expected1, retrieved.Secret);
+        Assert.Equal(expected2, retrieved.Secret);
+        Assert.Equal(_testAccount, retrieved.Account);
     }
 
     [Fact]
@@ -136,7 +139,8 @@ public class MacOSKeychainTests : IDisposable
         var retrieved = _keychain.LoadInternetPasswordItem(_testServer);
         
         Assert.NotNull(retrieved);
-        Assert.Equal(expected, retrieved);
+        Assert.Equal(expected, retrieved.Secret);
+        Assert.Equal(_testAccount, retrieved.Account);
     }
 
     [Fact]
@@ -154,7 +158,8 @@ public class MacOSKeychainTests : IDisposable
         var retrieved = _keychain.LoadInternetPasswordItem(_testServer, option);
         
         Assert.NotNull(retrieved);
-        Assert.Equal(expected, retrieved);
+        Assert.Equal(expected, retrieved.Secret);
+        Assert.Equal(_testAccount, retrieved.Account);
     }
 
     [Fact]
