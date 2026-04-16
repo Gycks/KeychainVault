@@ -32,35 +32,33 @@ public interface IKeychain
     /// Loads a generic password item from the keychain.
     /// </summary>
     /// <param name="service">The service name associated with the password.</param>
-    /// <param name="account">The account name associated with the password.</param>
     /// <param name="option">Optional additional options for the password item.</param>
     /// <returns>The password data as a byte array, or null if not found.</returns>
-    byte[]? LoadGenericPasswordItem(string service, string account, GenericPasswordOption? option = null);
+    byte[]? LoadGenericPasswordItem(string service, GenericPasswordOption? option = null);
 
     /// <summary>
     /// Loads an internet password item from the keychain.
     /// </summary>
     /// <param name="server">The server name associated with the password.</param>
-    /// <param name="account">The account name associated with the password.</param>
     /// <param name="option">Optional additional options for the password item.</param>
     /// <returns>The password data as a byte array, or null if not found.</returns>
-    byte[]? LoadInternetPasswordItem(string server, string account, InternetPasswordOption? option = null);
+    byte[]? LoadInternetPasswordItem(string server, InternetPasswordOption? option = null);
 
     /// <summary>
     /// Deletes a generic password item from the keychain.
     /// </summary>
     /// <param name="service">The service name associated with the password.</param>
-    /// <param name="account">The account name associated with the password.</param>
+    /// <param name="account">Optional account name associated with the password.</param>
     /// <param name="option">Optional additional options for the password item.</param>
     /// <returns>True if the item was deleted, false if it was not found.</returns>
-    bool DeleteGenericPasswordItem(string service, string account, GenericPasswordOption? option = null);
+    bool DeleteGenericPasswordItem(string service, string? account=null, GenericPasswordOption? option = null);
 
     /// <summary>
     /// Deletes an internet password item from the keychain.
     /// </summary>
     /// <param name="server">The server name associated with the password.</param>
-    /// <param name="account">The account name associated with the password.</param>
+    /// <param name="account">Optional account name associated with the password.</param>
     /// <param name="option">Optional additional options for the password item.</param>
     /// <returns>True if the item was deleted, false if it was not found.</returns>
-    bool DeleteInternetPasswordItem(string server, string account, InternetPasswordOption? option = null);
+    bool DeleteInternetPasswordItem(string server, string? account=null, InternetPasswordOption? option = null);
 }

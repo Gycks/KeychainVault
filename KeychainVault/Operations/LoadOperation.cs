@@ -12,13 +12,11 @@ namespace KeychainVault.Operations;
 internal static class LoadOperation
 {
     private static byte[]? LoadItem(IntPtr secClass, 
-        IntPtr primaryKey, string primaryValue, string primaryValueName, string account, 
+        IntPtr primaryKey, string primaryValue, string primaryValueName, List<IntPtr> toRelease, 
         bool useDataProtectionKeychain, List<IntPtr>? optionKeys=null, List<IntPtr>? optionValues=null)
     {
         Validator.IsStringValid(primaryValue, primaryValueName);
-        Validator.IsStringValid(account, nameof(account));
-
-        var toRelease = new List<IntPtr>();
+        
         IntPtr result = IntPtr.Zero;
 
         try
@@ -26,14 +24,10 @@ internal static class LoadOperation
             var cfPrimaryValue = KeychainHelpers.CreateCFString(primaryValue);
             toRelease.Add(cfPrimaryValue);
 
-            var cfAccount = KeychainHelpers.CreateCFString(account);
-            toRelease.Add(cfAccount);
-
             List<IntPtr> keys =
             [
                 KeychainConstants.KSecClass,
                 primaryKey,
-                KeychainConstants.KSecAttrAccount,
                 KeychainConstants.KSecReturnData,
                 KeychainConstants.KSecMatchLimit
             ];
@@ -42,7 +36,6 @@ internal static class LoadOperation
             [
                 secClass,
                 cfPrimaryValue,
-                cfAccount,
                 KeychainConstants.KCFBooleanTrue,
                 KeychainConstants.KSecMatchLimitOne
             ];
@@ -112,13 +105,13 @@ internal static class LoadOperation
         }
     }
     
-    internal static byte[]? LoadGenericPassword(string service, string account, bool useDataProtectionKeychain, GenericPasswordOption? option=null)
+    internal static byte[]? LoadGenericPassword(string service, bool useDataProtectionKeychain, GenericPasswordOption? option=null)
     {
-        if (option is not null)
-        {
-            var toRelease = new List<IntPtr>();
+        var toRelease = new List<IntPtr>();
 
-            try
+        try
+        {
+            if (option is not null)
             {
                 var (oKeys, oValues) = option.BuildForQuery(toRelease);
 
@@ -127,33 +120,34 @@ internal static class LoadOperation
                     KeychainConstants.KSecAttrService,
                     service,
                     nameof(service),
-                    account,
+                    toRelease,
                     useDataProtectionKeychain,
                     oKeys,
                     oValues);
             }
-            finally
-            {
-                KeychainHelpers.SafeRelease(toRelease);
-            }
+            else
+                return LoadItem(
+                    KeychainConstants.KSecClassGenericPassword,
+                    KeychainConstants.KSecAttrService,
+                    service,
+                    nameof(service),
+                    toRelease,
+                    useDataProtectionKeychain);
         }
-
-        return LoadItem(
-            KeychainConstants.KSecClassGenericPassword,
-            KeychainConstants.KSecAttrService,
-            service,
-            nameof(service),
-            account,
-            useDataProtectionKeychain);
+        finally
+        {
+            KeychainHelpers.SafeRelease(toRelease);
+        }
+        
     }
 
-    internal static byte[]? LoadInternetPassword(string server, string account, bool useDataProtectionKeychain, InternetPasswordOption? option=null)
+    internal static byte[]? LoadInternetPassword(string server, bool useDataProtectionKeychain, InternetPasswordOption? option=null)
     {
-        if (option is not null)
-        {
-            var toRelease = new List<IntPtr>();
+        var toRelease = new List<IntPtr>();
 
-            try
+        try
+        {
+            if (option is not null)
             {
                 var (oKeys, oValues) = option.BuildForQuery(toRelease);
 
@@ -162,23 +156,23 @@ internal static class LoadOperation
                     KeychainConstants.KSecAttrServer,
                     server,
                     nameof(server),
-                    account,
+                    toRelease,
                     useDataProtectionKeychain,
                     oKeys,
                     oValues);
             }
-            finally
-            {
-                KeychainHelpers.SafeRelease(toRelease);
-            }
+            return LoadItem(
+                KeychainConstants.KSecClassInternetPassword,
+                KeychainConstants.KSecAttrServer,
+                server,
+                nameof(server),
+                toRelease,
+                useDataProtectionKeychain);
         }
-
-        return LoadItem(
-            KeychainConstants.KSecClassInternetPassword,
-            KeychainConstants.KSecAttrServer,
-            server,
-            nameof(server),
-            account,
-            useDataProtectionKeychain);
+        finally
+        {
+            KeychainHelpers.SafeRelease(toRelease);
+        }
+        
     }
 }

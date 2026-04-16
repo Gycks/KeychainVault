@@ -11,31 +11,40 @@ namespace KeychainVault.Operations;
 public class DeleteOperation
 {
     private static int DeleteItem(IntPtr secClass, IntPtr primaryKey, string primaryValue, string primaryValueName,
-        string account, List<IntPtr> toRelease, bool useDataProtectionKeychain,
+        string? account, List<IntPtr> toRelease, bool useDataProtectionKeychain,
         List<IntPtr>? optionKeys=null, List<IntPtr>? optionValues=null)
     {
         Validator.IsStringValid(primaryValue, primaryValueName);
-        Validator.IsStringValid(account, nameof(account));
         
         var cfPrimaryValue = KeychainHelpers.CreateCFString(primaryValue);
         toRelease.Add(cfPrimaryValue);
+
+        var cfAccount = IntPtr.Zero;
+        if (!string.IsNullOrWhiteSpace(account))
+        {
+            Validator.IsStringValid(account, nameof(account));
+            cfAccount = KeychainHelpers.CreateCFString(account);
+            toRelease.Add(cfAccount);
+        }
         
-        var cfAccount = KeychainHelpers.CreateCFString(account);
-        toRelease.Add(cfAccount);
         
         List<IntPtr> keys =
         [
             KeychainConstants.KSecClass,
             primaryKey,
-            KeychainConstants.KSecAttrAccount,
         ];
 
         List<IntPtr> values =
         [
             secClass,
             cfPrimaryValue,
-            cfAccount,
         ];
+
+        if (cfAccount != IntPtr.Zero)
+        {
+            keys.Add(KeychainConstants.KSecAttrAccount);
+            values.Add(cfAccount);
+        }
         
         if (useDataProtectionKeychain)
         {
@@ -68,7 +77,7 @@ public class DeleteOperation
         return KeychainServices.SecItemDelete(query);
     }
     
-    internal static bool DeleteGenericPassword(string service, string account, bool useDataProtectionKeychain=false, GenericPasswordOption? option=null)
+    internal static bool DeleteGenericPassword(string service, string? account, bool useDataProtectionKeychain=false, GenericPasswordOption? option=null)
     {
         var toRelease = new List<IntPtr>();
         
@@ -101,7 +110,7 @@ public class DeleteOperation
         }
     }
 
-    internal static bool DeleteInternetPassword(string server, string account, bool useDataProtectionKeychain=false, InternetPasswordOption? option=null)
+    internal static bool DeleteInternetPassword(string server, string? account, bool useDataProtectionKeychain=false, InternetPasswordOption? option=null)
     {
         var toRelease = new List<IntPtr>();
 

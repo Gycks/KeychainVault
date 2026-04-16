@@ -44,25 +44,25 @@ namespace KeychainVault
                 useDataProtectionKeychain: _useDataProtectionKeychain, option: option);
         }
         
-        public byte[]? LoadGenericPasswordItem(string service, string account, GenericPasswordOption? option = null)
+        public byte[]? LoadGenericPasswordItem(string service, GenericPasswordOption? option = null)
         {
             AssertPlatformValid();
-            return LoadOperation.LoadGenericPassword(service, account, useDataProtectionKeychain: _useDataProtectionKeychain, option);
+            return LoadOperation.LoadGenericPassword(service, useDataProtectionKeychain: _useDataProtectionKeychain, option);
         }
 
-        public byte[]? LoadInternetPasswordItem(string server, string account, InternetPasswordOption? option = null)
+        public byte[]? LoadInternetPasswordItem(string server, InternetPasswordOption? option = null)
         {
             AssertPlatformValid();
-            return LoadOperation.LoadInternetPassword(server, account, useDataProtectionKeychain: _useDataProtectionKeychain, option);
+            return LoadOperation.LoadInternetPassword(server, useDataProtectionKeychain: _useDataProtectionKeychain, option);
         }
 
-        public bool DeleteGenericPasswordItem(string service, string account, GenericPasswordOption? option = null)
+        public bool DeleteGenericPasswordItem(string service, string? account=null, GenericPasswordOption? option = null)
         {
             AssertPlatformValid();
             return DeleteOperation.DeleteGenericPassword(service, account, useDataProtectionKeychain: _useDataProtectionKeychain, option);
         }
 
-        public bool DeleteInternetPasswordItem(string server, string account, InternetPasswordOption? option = null)
+        public bool DeleteInternetPasswordItem(string server, string? account=null, InternetPasswordOption? option = null)
         {
             AssertPlatformValid();
             return DeleteOperation.DeleteInternetPassword(server, account, useDataProtectionKeychain: _useDataProtectionKeychain, option);
