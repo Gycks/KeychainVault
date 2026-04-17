@@ -13,12 +13,17 @@ namespace KeychainVault
     {
         private readonly bool _useDataProtectionKeychain;
 
-        public MacOSKeychain() : this(true) { }
-
-        internal MacOSKeychain(bool useDataProtectionKeychain)
+        public MacOSKeychain(bool useDataProtectionKeychain)
         {
             _useDataProtectionKeychain = useDataProtectionKeychain;
         }
+
+        public MacOSKeychain()
+        {
+            _useDataProtectionKeychain = true;
+        }
+
+        
         
         private void AssertPlatformValid()
         {
