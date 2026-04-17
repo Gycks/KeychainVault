@@ -13,3 +13,8 @@
 ### v1.0.3
 - Extend `LoadXPasswordItem` to return not just the secret, but a response object consisiting of the secret
     and some data attributes.
+
+### v1.0.4
+
+- Added parameterized constructor to `MacOSKeychain` allowing choice between data protection keychain (recommended) and legacy file-based one, 
+with data protection as the default.

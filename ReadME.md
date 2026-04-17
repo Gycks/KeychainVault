@@ -61,6 +61,31 @@ if (item != null)
 }
 ```
 
+## Initialization
+
+The `MacOSKeychain` class provides two constructors for initializing the keychain instance:
+
+### Default Constructor
+
+```csharp
+IKeychain keychain = new MacOSKeychain();
+```
+
+This constructor enforces the use of the macOS Data Protection Keychain, which provides enhanced security by requiring device authentication (passcode or biometric) to access stored items. According to Apple's official documentation, the Data Protection Keychain ensures that sensitive data is protected even if the device is lost or stolen, as items are encrypted and only accessible when the device is unlocked.
+
+It is recommended to use this default constructor for maximum security.
+
+### Parameterized Constructor
+
+```csharp
+IKeychain keychain = new MacOSKeychain(useDataProtectionKeychain: false);
+```
+
+This constructor allows opting out of the Data Protection Keychain, using the legacy file-based keychain instead. However, this is not recommended as it provides weaker security guarantees.
+
+**Note**: The parameterized constructor is provided for backward compatibility and specific use cases where the Data Protection Keychain may not be suitable. However, for most applications, it is advisable to use the default constructor to leverage the enhanced security features of the Data Protection Keychain.
+For local development, you can use the parameterized constructor to avoid issues with the Data Protection Keychain, which may require additional setup (e.g., provisioning profiles, entitlements and app signing). However, ensure that you switch to the default constructor for production builds to maintain strong security practices.
+
 ## Usage
 
 ### Adding Passwords
@@ -152,4 +177,3 @@ The main interface is `IKeychain` with the following methods:
 ## Security Considerations
 
 - Secrets are handled as `byte[]` and are wiped after each `AddItem` operation.
-
